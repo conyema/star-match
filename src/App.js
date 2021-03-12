@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import './App.css';
 import utils from './utils';
+import NumKey from './NumKey';
+import StarsDisplay from './StarsDisplay';
 
 const App = () => {
   // make star-count a state element; we want react to reflect its changes in UI
@@ -15,14 +17,12 @@ const App = () => {
         </div>
       <div className="body">
         <div className="left">
-          {utils.range(1, stars).map(starId => 
-            <div key={starId} className="star" />
-          )}
+          <StarsDisplay count={stars} />
         </div>
         <div className="right">
           {utils.range(1, 9).map(number => 
-            <button key={number} className="number">{number}</button>
-          )}
+            <NumKey key={number} number={number} />
+          )} 
         </div>
       </div>
       <div className="timer">Time Remaining: 10</div>
@@ -31,6 +31,8 @@ const App = () => {
 };
 
 export default App;
+
+
 
 
     // <div className="App">
