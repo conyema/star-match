@@ -9,8 +9,8 @@ const App = () => {
   // make star-count a state element; we want react to reflect its changes in UI
   // const stars = utils.random(1, 9);
   const [stars, setStars] = useState(utils.random(1, 9));
-  const [candidateNums, setCandidateNums] = useState([1, 5]);
-  const [availableNums, setAvailableNums] = useState([1, 2, 4, 5, 6, 7]);
+  const [candidateNums, setCandidateNums] = useState([]);
+  const [availableNums, setAvailableNums] = useState(utils.range(1, 9));
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
 
