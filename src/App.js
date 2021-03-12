@@ -9,6 +9,23 @@ const App = () => {
   // make star-count a state element; we want react to reflect its changes in UI
   // const stars = utils.random(1, 9);
   const [stars, setStars] = useState(utils.random(1, 9));
+  const [candidateNums, setCandidateNums] = useState([1, 5]);
+  const [availableNums, setAvailableNums] = useState([1, 2, 4, 5, 6, 7]);
+
+  const candidatesAreWrong = utils.sum(candidateNums) > stars;
+
+  // function to compute the status to be sent as booleans instead
+  // of passing unnecesary values(like av, cand nums ) that aren't used in rendering
+  const numberStatus = (number) => {
+    if (!availableNums.includes(number)) {
+      return 'used';
+    }
+
+    if (candidateNums.includes(number)) {
+      return candidatesAreWrong ? 'wrong': 'candidate';
+    }
+    return 'available';
+  };
 
   return (
     <div className="game">
@@ -21,7 +38,11 @@ const App = () => {
         </div>
         <div className="right">
           {utils.range(1, 9).map(number => 
-            <NumKey key={number} number={number} />
+            <NumKey 
+              key={number} 
+              status={numberStatus(number)} 
+              number={number} 
+            />
           )} 
         </div>
       </div>
@@ -32,6 +53,18 @@ const App = () => {
 
 export default App;
 
+
+/*
+- 2 logic to consider in react for every 'behaviour'
+ - App logic to change state; logic for the 'behaviour'
+ - UI logic to describe state; what the 'behaviour' is going to change
+- to design UI logic u need to come up with what element
+  needs to be on the state
+- minimize the state in a stteful component; don't put stuff that
+  can be computed/derived from other state
+
+
+*/
 
 
 
