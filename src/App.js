@@ -27,6 +27,39 @@ const App = () => {
     return 'available';
   };
 
+  const onNumberClick = (number, currStatus) => {
+    // console.log('numKey:', number, 'Status:', currStatus);
+    
+    // do nothing if its a used number
+    if (currStatus === 'used') {
+      return;
+    }
+    // else add num as new candidate if 'avialable' or otherwise
+    const newCandidateNums = 
+      currStatus === 'available' 
+      ? candidateNums.concat(number)
+      : candidateNums.filter(cn => cn !== number);
+      
+    
+    // update the game to mark num as candidate
+    if (utils.sum(newCandidateNums) !== stars) {
+      setCandidateNums(newCandidateNums);
+    } else {
+      /* update the game to mark num as 'used'/candidate
+      - get new avail. nums and set it
+      - and reset game state
+      */
+      const newAvailableNums = availableNums.filter(
+        n => !newCandidateNums.includes(n)
+      );
+      setStars(utils.randomSumIn(newAvailableNums, 9));
+      setAvailableNums(newAvailableNums);
+      setCandidateNums([]);
+    }
+    return;
+  };
+
+
   return (
     <div className="game">
       <div className="help">
@@ -42,6 +75,7 @@ const App = () => {
               key={number} 
               status={numberStatus(number)} 
               number={number} 
+              onClick={onNumberClick}
             />
           )} 
         </div>
