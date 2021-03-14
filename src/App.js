@@ -4,6 +4,7 @@ import './App.css';
 import utils from './utils';
 import NumKey from './NumKey';
 import StarsDisplay from './StarsDisplay';
+import Replay from './Replay'
 
 const App = () => {
   // make star-count a state element; we want react to reflect its changes in UI
@@ -13,6 +14,14 @@ const App = () => {
   const [availableNums, setAvailableNums] = useState(utils.range(1, 9));
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
+  const gameIsDone = availableNums.length === 0;
+
+  // reset states to initial value
+  const resetGame = () => {
+    setStars(utils.random(1, 9));
+    setCandidateNums([]);
+    setAvailableNums(utils.range(1, 9));
+  };
 
   // function to compute the status to be sent as booleans instead
   // of passing unnecesary values(like av, cand nums ) that aren't used in rendering
@@ -67,7 +76,12 @@ const App = () => {
         </div>
       <div className="body">
         <div className="left">
-          <StarsDisplay count={stars} />
+          {gameIsDone ?
+           (
+             < Replay onClick={resetGame}/>
+           ) : (
+              <StarsDisplay count={stars} />
+            )}
         </div>
         <div className="right">
           {utils.range(1, 9).map(number => 
@@ -96,10 +110,21 @@ export default App;
   needs to be on the state
 - minimize the state in a stteful component; don't put stuff that
   can be computed/derived from other state
-
-
 */
 
+/* React structure
+  - Hooks into states and any side effects
+  - computations based on the state : core App logic
+  - then the return statement
+*/
+
+/*  Resetting game 
+  1 - reset game state to initial/default values :- enough for
+      most cases. But when comp have side effects(eg. subscribing to data, starting a timer etc)
+      things can get complicated as u have to reset  side effects.
+  
+  2 - 
+*/
 
 
     // <div className="App">
