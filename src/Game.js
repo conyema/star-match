@@ -5,20 +5,26 @@ import NumKey from './NumKey';
 import StarsDisplay from './StarsDisplay';
 import Replay from './Replay'
 
-const Game = (props) => {
-  // make star-count a state element; we want react to reflect its changes in UI
+/* custom hook that: 
+  - initialize state
+  - initialize side effects
+  - gives pre-defined behaviours to transact on the state
+*/
+const useGameState = () => {
+    /* make star-count a state element; we want react to reflect its changes in UI */
+  
   // const stars = utils.random(1, 9);
   const [stars, setStars] = useState(utils.random(1, 9));
   const [candidateNums, setCandidateNums] = useState([]);
   const [availableNums, setAvailableNums] = useState(utils.range(1, 9));
   const [timeLeft, setTimeLeft] = useState(10);
 
-  // setInterval or setTimeout(more interesting)
-  // useEffect is a way to introduce side effect for the Game comp
-  // takes a function it runs whenever the owner comp renders itself
-  // always remember to clean a side effect introduced when its no longer needed
-  // done in the return value of the side-effect function: return a func that
-  // will be called when React is about to unmount or re-render the comp
+  /* setInterval or setTimeout(more interesting)
+   useEffect is a way to introduce side effect for the Game comp
+   takes a function it runs whenever the owner comp renders itself
+   always remember to clean a side effect introduced when its no longer needed
+   done in the return value of the side-effect function: return a func that
+   will be called when React is about to unmount or re-render the comp */
   
   useEffect(() => {
     // console.log('done rendering..');
@@ -32,6 +38,36 @@ const Game = (props) => {
     // return () => {console.log('Game is changing: comp re-rendering');}
   });
 
+  const setGameState = (newCandidateNums) => {
+    // update the game to mark num as candidate
+    if (utils.sum(newCandidateNums) !== stars) {
+      setCandidateNums(newCandidateNums);
+    } else {
+      /* update the game to mark num as 'used'/candidate
+      - get new avail. nums and set it
+      - and reset game state
+      */
+      const newAvailableNums = availableNums.filter(
+        n => !newCandidateNums.includes(n)
+      );
+      setStars(utils.randomSumIn(newAvailableNums, 9));
+      setAvailableNums(newAvailableNums);
+      setCandidateNums([]);
+    }
+  };
+
+  return {stars, candidateNums, availableNums, timeLeft, setGameState};
+};
+
+const Game = (props) => {
+  const {
+    stars, 
+    candidateNums, 
+    availableNums, 
+    timeLeft, 
+    setGameState
+  } = useGameState();
+
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
   // const gameIsWon = availableNums.length === 0;
   // const gameIsLost = timeLeft === 0;
@@ -40,15 +76,9 @@ const Game = (props) => {
     : timeLeft === 0 ? 'lost' 
     : 'active';
 
-  // reset states to initial value
-  // const resetGame = () => {
-  //   setStars(utils.random(1, 9));
-  //   setCandidateNums([]);
-  //   setAvailableNums(utils.range(1, 9));
-  // };
+  /* function to compute the status to be sent as booleans instead
+    of passing unnecesary values(like av, cand nums ) that aren't used in rendering */
 
-  // function to compute the status to be sent as booleans instead
-  // of passing unnecesary values(like av, cand nums ) that aren't used in rendering
   const numberStatus = (number) => {
     if (!availableNums.includes(number)) {
       return 'used';
@@ -73,23 +103,7 @@ const Game = (props) => {
       ? candidateNums.concat(number)
       : candidateNums.filter(cn => cn !== number);
       
-    
-    // update the game to mark num as candidate
-    if (utils.sum(newCandidateNums) !== stars) {
-      setCandidateNums(newCandidateNums);
-    } else {
-      /* update the game to mark num as 'used'/candidate
-      - get new avail. nums and set it
-      - and reset game state
-      */
-      const newAvailableNums = availableNums.filter(
-        n => !newCandidateNums.includes(n)
-      );
-      setStars(utils.randomSumIn(newAvailableNums, 9));
-      setAvailableNums(newAvailableNums);
-      setCandidateNums([]);
-    }
-    return;
+    setGameState(newCandidateNums);
   };
 
 
