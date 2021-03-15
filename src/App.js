@@ -23,7 +23,7 @@ const App = () => {
   
   useEffect(() => {
     // console.log('done rendering..');
-    if (timeLeft > 0) {
+    if (timeLeft > 0 && availableNums.length > 0) {
       const timerId = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
@@ -34,7 +34,12 @@ const App = () => {
   });
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
-  const gameIsDone = availableNums.length === 0;
+  // const gameIsWon = availableNums.length === 0;
+  // const gameIsLost = timeLeft === 0;
+  const gameStatus = availableNums.length === 0 
+    ? 'won'
+    : timeLeft === 0 ? 'lost' 
+    : 'active';
 
   // reset states to initial value
   const resetGame = () => {
@@ -60,7 +65,7 @@ const App = () => {
     // console.log('numKey:', number, 'Status:', currStatus);
     
     // do nothing if its a used number
-    if (currStatus === 'used') {
+    if (gameStatus !== 'active' || currStatus === 'used') {
       return;
     }
     // else add num as new candidate if 'avialable' or otherwise
@@ -96,9 +101,9 @@ const App = () => {
         </div>
       <div className="body">
         <div className="left">
-          {gameIsDone ?
+          {gameStatus !== 'active' ?
            (
-             < Replay onClick={resetGame}/>
+             < Replay onClick={resetGame} gameStatus={gameStatus} />
            ) : (
               <StarsDisplay count={stars} />
             )}
