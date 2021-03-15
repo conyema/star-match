@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import utils from './utils';
 import NumKey from './NumKey';
@@ -12,6 +12,26 @@ const App = () => {
   const [stars, setStars] = useState(utils.random(1, 9));
   const [candidateNums, setCandidateNums] = useState([]);
   const [availableNums, setAvailableNums] = useState(utils.range(1, 9));
+  const [timeLeft, setTimeLeft] = useState(10);
+
+  // setInterval or setTimeout(more interesting)
+  // useEffect is a way to introduce side effect for the App comp
+  // takes a function it runs whenever the owner comp renders itself
+  // always remember to clean a side effect introduced when its no longer needed
+  // done in the return value of the side-effect function: return a func that
+  // will be called when React is about to unmount or re-render the comp
+  
+  useEffect(() => {
+    // console.log('done rendering..');
+    if (timeLeft > 0) {
+      const timerId = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+
+      return () => clearTimeout(timerId);
+    }
+    // return () => {console.log('App is changing: comp re-rendering');}
+  });
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
   const gameIsDone = availableNums.length === 0;
@@ -94,7 +114,7 @@ const App = () => {
           )} 
         </div>
       </div>
-      <div className="timer">Time Remaining: 10</div>
+      <div className="timer">Time Remaining: {timeLeft} Secs</div>
     </div>
   );
 };
