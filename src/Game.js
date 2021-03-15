@@ -9,6 +9,9 @@ import Replay from './Replay'
   - initialize state
   - initialize side effects
   - gives pre-defined behaviours to transact on the state
+  NB: - ALWAYS use hooks in the right order; do NOT call hooks inside loop
+        or conditions (Rule #1)
+      - Name hooks with [use]; it helps linters
 */
 const useGameState = () => {
     /* make star-count a state element; we want react to reflect its changes in UI */
